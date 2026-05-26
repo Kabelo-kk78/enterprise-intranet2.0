@@ -1,14 +1,15 @@
 import React from 'react';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { 
-  HomeIcon, 
-  DocumentIcon, 
+import {
+  HomeIcon,
+  DocumentIcon,
   CheckCircleIcon,
   UsersIcon,
   ChartBarIcon,
   CogIcon,
-  ArrowRightOnRectangleIcon 
+  ArrowRightOnRectangleIcon,
+  MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
 
 const navigation = [
@@ -23,6 +24,7 @@ const navigation = [
 export default function MainLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
@@ -30,47 +32,68 @@ export default function MainLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-50">
       <div className="flex h-screen">
-        <div className="w-64 bg-white shadow-lg">
-          <div className="flex flex-col h-full">
-            <div className="p-4 border-b">
-              <h1 className="text-xl font-bold text-gray-800">Enterprise Intranet</h1>
-              <p className="text-sm text-gray-600 mt-1">{user?.department || 'Dashboard'}</p>
-            </div>
-            
-            <nav className="flex-1 p-4 space-y-2">
-              {navigation.map((item) => (
+        <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
+          <div className="p-5 border-b border-gray-100">
+            <h1 className="text-lg font-bold text-gray-900">Enterprise Intranet</h1>
+            <p className="text-xs text-gray-500 mt-0.5">{user?.department || 'Dashboard'}</p>
+          </div>
+
+          <nav className="flex-1 p-3 space-y-1">
+            {navigation.map((item) => {
+              const isActive = location.pathname.startsWith(item.href);
+              return (
                 <Link
                   key={item.name}
                   to={item.href}
-                  className="flex items-center px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
+                  className={`flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'bg-blue-50 text-blue-700'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  }`}
                 >
-                  <item.icon className="w-5 h-5 mr-3" />
+                  <item.icon className={`w-5 h-5 mr-3 ${isActive ? 'text-blue-600' : 'text-gray-400'}`} />
                   {item.name}
                 </Link>
-              ))}
-            </nav>
+              );
+            })}
+          </nav>
 
-            <div className="p-4 border-t">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-700">{user?.name || 'User'}</p>
-                  <p className="text-xs text-gray-500 capitalize">{user?.role || 'Staff'}</p>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="p-2 text-gray-600 hover:text-red-600 transition-colors"
-                >
-                  <ArrowRightOnRectangleIcon className="w-5 h-5" />
-                </button>
+          <div className="p-4 border-t border-gray-100">
+            <div className="flex items-center justify-between">
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium text-gray-900 truncate">{user?.name || 'User'}</p>
+                <p className="text-xs text-gray-500 capitalize truncate">{user?.role || 'Staff'}</p>
               </div>
+              <button
+                onClick={handleLogout}
+                className="p-2 text-gray-400 hover:text-red-600 transition-colors rounded-lg hover:bg-red-50 ml-2"
+              >
+                <ArrowRightOnRectangleIcon className="w-5 h-5" />
+              </button>
             </div>
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto">
-          <main className="p-6">
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <header className="bg-white border-b border-gray-200 px-6 py-3">
+            <div className="flex items-center justify-between">
+              <div className="relative">
+                <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search documents, users..."
+                  className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-80 bg-gray-50"
+                />
+              </div>
+              <div className="flex items-center space-x-3">
+                <span className="text-sm text-gray-600">Welcome, {user?.name || user?.email || 'User'}</span>
+              </div>
+            </div>
+          </header>
+
+          <main className="flex-1 overflow-auto p-6">
             <Outlet />
           </main>
         </div>

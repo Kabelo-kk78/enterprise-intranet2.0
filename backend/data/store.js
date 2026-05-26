@@ -14,14 +14,16 @@ const departments = [
   { id: 'd3', name: 'Finance', headCount: 6 },
   { id: 'd4', name: 'Marketing', headCount: 10 },
   { id: 'd5', name: 'Operations', headCount: 12 },
+  { id: 'd6', name: 'IT', headCount: 9 },
 ];
 
 const activities = [
-  { id: 'a1', description: 'New employee onboarding completed', timestamp: new Date(Date.now() - 3600000).toISOString(), type: 'hr' },
-  { id: 'a2', description: 'Q4 budget report submitted', timestamp: new Date(Date.now() - 7200000).toISOString(), type: 'finance' },
-  { id: 'a3', description: 'Server maintenance scheduled', timestamp: new Date(Date.now() - 10800000).toISOString(), type: 'it' },
-  { id: 'a4', description: 'Marketing campaign approved', timestamp: new Date(Date.now() - 14400000).toISOString(), type: 'marketing' },
-  { id: 'a5', description: 'Security audit completed', timestamp: new Date(Date.now() - 18000000).toISOString(), type: 'security' },
+  { id: 'a1', description: 'Emily Chen uploaded Q4 Financial Report 2025', timestamp: new Date(Date.now() - 172800000).toISOString(), type: 'document', department: 'Finance', user: 'Emily Chen' },
+  { id: 'a2', description: 'Sarah Mitchell approved Q4 Financial Report 2025', timestamp: new Date(Date.now() - 259200000).toISOString(), type: 'document', department: 'Finance', user: 'Sarah Mitchell' },
+  { id: 'a3', description: 'James Wilson uploaded Employee Handbook v5.2', timestamp: new Date(Date.now() - 432000000).toISOString(), type: 'document', department: 'HR', user: 'James Wilson' },
+  { id: 'a4', description: 'Lisa Park submitted for approval Marketing Campaign Brief - Summer', timestamp: new Date(Date.now() - 518400000).toISOString(), type: 'document', department: 'Marketing', user: 'Lisa Park' },
+  { id: 'a5', description: 'Kevin Adams rejected Operations Manual Update', timestamp: new Date(Date.now() - 604800000).toISOString(), type: 'document', department: 'Operations', user: 'Kevin Adams' },
+  { id: 'a6', description: 'Robert Garcia downloaded Annual Budget Proposal', timestamp: new Date(Date.now() - 691200000).toISOString(), type: 'document', department: 'Finance', user: 'Robert Garcia' },
 ];
 
 const documents = [
@@ -95,7 +97,7 @@ function addUser(userData) {
   const id = 'u' + (nextUserNum++);
   const user = { id, ...userData, password: bcrypt.hashSync(userData.password, 10), status: 'active', createdAt: new Date().toISOString().split('T')[0] };
   users.push(user);
-  return { id, name: user.name, email: user.email, role: user.role, department: user.department };
+  return { id, name: user.name, email: user.email, role: user.role, department: user.department, position: user.position, status: 'active' };
 }
 
 function findUserByEmail(email) {
@@ -117,15 +119,21 @@ function addDocument(docData) {
   return doc;
 }
 
-function addActivity(description, type) {
+function addActivity(description, type, department, user) {
   const id = 'a' + (nextActivityNum++);
   const activity = { id, description, timestamp: new Date().toISOString(), type };
+  if (department) activity.department = department;
+  if (user) activity.user = user;
   activities.unshift(activity);
   return activity;
+}
+
+function nextApprovalId() {
+  return 'ap' + (nextApprovalNum++);
 }
 
 module.exports = {
   employees, departments, activities, documents, approvals, users,
   addUser, findUserByEmail, findUserById, getUsers,
-  addDocument, addActivity,
+  addDocument, addActivity, nextApprovalId,
 };
