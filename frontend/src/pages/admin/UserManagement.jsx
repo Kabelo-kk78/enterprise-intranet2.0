@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { PlusIcon } from '@heroicons/react/24/outline';
+import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 
 const departmentOptions = ['Engineering', 'HR', 'Finance', 'Marketing', 'Operations', 'IT', 'General'];
 
 export default function UserManagement() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
@@ -12,6 +16,12 @@ export default function UserManagement() {
   const [message, setMessage] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
   const [addForm, setAddForm] = useState({ name: '', email: '', password: '', role: 'staff', department: 'General', position: 'Staff' });
+
+  useEffect(() => {
+    if (!['admin', 'super_admin'].includes(user?.role)) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const fetchUsers = () => {
     api.get('/users').then(res => { setUsers(res.data); setLoading(false); }).catch(() => setLoading(false));
@@ -52,7 +62,7 @@ export default function UserManagement() {
   };
 
   const roleBadge = (role) => {
-    const colors = { admin: 'bg-purple-100 text-purple-800', manager: 'bg-blue-100 text-blue-800', staff: 'bg-gray-100 text-gray-800' };
+    const colors = { super_admin: 'bg-red-100 text-red-800', admin: 'bg-purple-100 text-purple-800', manager: 'bg-blue-100 text-blue-800', staff: 'bg-gray-100 text-gray-800', guest: 'bg-green-100 text-green-800' };
     return <span className={`px-2 py-1 rounded-full text-xs font-medium ${colors[role] || colors.staff}`}>{role}</span>;
   };
 
@@ -99,12 +109,14 @@ export default function UserManagement() {
                     <td className="px-6 py-4"><input type="text" value={editForm.department} onChange={e => setEditForm({ ...editForm, department: e.target.value })}
                       className="w-full px-2 py-1 border border-gray-300 rounded text-sm" /></td>
                     <td className="px-6 py-4">
-                      <select value={editForm.role} onChange={e => setEditForm({ ...editForm, role: e.target.value })}
-                        className="px-2 py-1 border border-gray-300 rounded text-sm">
-                        <option value="admin">admin</option>
-                        <option value="manager">manager</option>
-                        <option value="staff">staff</option>
-                      </select>
+                        <select value={editForm.role} onChange={e => setEditForm({ ...editForm, role: e.target.value })}
+                          className="px-2 py-1 border border-gray-300 rounded text-sm">
+                          <option value="super_admin">super_admin</option>
+                          <option value="admin">admin</option>
+                          <option value="manager">manager</option>
+                          <option value="staff">staff</option>
+                          <option value="guest">guest</option>
+                        </select>
                     </td>
                     <td className="px-6 py-4">
                       <select value={editForm.status} onChange={e => setEditForm({ ...editForm, status: e.target.value })}
@@ -171,6 +183,8 @@ export default function UserManagement() {
                   <option value="staff">Staff</option>
                   <option value="manager">Manager</option>
                   <option value="admin">Admin</option>
+                  <option value="super_admin">Super Admin</option>
+                  <option value="guest">Guest</option>
                 </select>
               </div>
               <div>

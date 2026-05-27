@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { DocumentIcon, ArrowUpTrayIcon, MagnifyingGlassIcon, ArrowDownTrayIcon, FunnelIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 
 const statusOptions = ['All', 'Approved', 'Pending', 'Rejected'];
 const departmentOptions = ['All', 'HR', 'Finance', 'Marketing', 'Engineering', 'IT', 'Operations'];
 
 export default function Documents() {
+  const { user } = useAuth();
   const [documents, setDocuments] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -108,11 +110,13 @@ export default function Documents() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-900">Documents</h1>
-        <button onClick={() => setShowUpload(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors">
-          <ArrowUpTrayIcon className="w-5 h-5" />
-          Upload
-        </button>
+        {user?.role !== 'guest' && (
+          <button onClick={() => setShowUpload(true)}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors">
+            <ArrowUpTrayIcon className="w-5 h-5" />
+            Upload
+          </button>
+        )}
       </div>
 
       <div className="flex items-center gap-4">
@@ -170,7 +174,7 @@ export default function Documents() {
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2">
-                    {doc.status === 'pending' && (
+                    {doc.status === 'pending' && ['manager', 'admin', 'super_admin'].includes(user?.role) && (
                       <>
                         <button onClick={() => handleApprove(doc)}
                           disabled={actionLoading === doc.id}

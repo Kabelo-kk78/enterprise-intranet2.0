@@ -9,7 +9,15 @@ exports.getDocuments = async (req, res) => {
     const approval = approvals.find(a => a.document === doc.name);
     return approval ? { ...doc, approvalId: approval.id, approvalStatus: approval.status } : doc;
   });
-  res.json(docsWithApprovals);
+  let filtered;
+  if (req.user.role === 'guest') {
+    filtered = docsWithApprovals.filter(d => d.status === 'approved');
+  } else if (req.user.role === 'staff') {
+    filtered = docsWithApprovals.filter(d => d.uploadedBy === req.user.name);
+  } else {
+    filtered = docsWithApprovals;
+  }
+  res.json(filtered);
 };
 
 exports.getDocument = async (req, res) => {

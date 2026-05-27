@@ -12,7 +12,15 @@ import {
   MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
 
-const navigation = [
+const roleNavMap = {
+  super_admin: ['Dashboard', 'Documents', 'Approvals', 'Users', 'Reports', 'Settings'],
+  admin: ['Dashboard', 'Documents', 'Approvals', 'Users', 'Reports', 'Settings'],
+  manager: ['Dashboard', 'Documents', 'Approvals', 'Reports', 'Settings'],
+  staff: ['Dashboard', 'Documents', 'Settings'],
+  guest: ['Dashboard', 'Documents'],
+};
+
+const allNavItems = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
   { name: 'Documents', href: '/documents', icon: DocumentIcon },
   { name: 'Approvals', href: '/approvals', icon: CheckCircleIcon },
@@ -41,7 +49,9 @@ export default function MainLayout() {
           </div>
 
           <nav className="flex-1 p-3 space-y-1">
-            {navigation.map((item) => {
+            {allNavItems
+              .filter(item => (roleNavMap[user?.role] || roleNavMap.staff).includes(item.name))
+              .map((item) => {
               const isActive = location.pathname.startsWith(item.href);
               return (
                 <Link

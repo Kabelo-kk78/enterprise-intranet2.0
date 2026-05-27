@@ -4,10 +4,10 @@ const { getUsers, getUser, createUser, updateUser, getEmployees } = require('../
 const { protect } = require('../middleware/authMiddleware');
 const { checkRole } = require('../middleware/roleMiddleware');
 
-router.get('/', protect, checkRole('admin', 'manager'), getUsers);
+router.get('/', protect, checkRole('super_admin', 'admin'), getUsers);
 router.get('/employees', protect, getEmployees);
-router.post('/', protect, checkRole('admin'), createUser);
+router.post('/', protect, checkRole('super_admin', 'admin'), createUser);
 router.get('/:id', protect, getUser);
-router.put('/:id', protect, checkRole('admin'), updateUser);
+router.put('/:id', protect, checkRole('super_admin', 'admin'), updateUser);
 
 module.exports = router;

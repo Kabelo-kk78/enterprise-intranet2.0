@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
 const priorityColors = {
@@ -15,10 +17,18 @@ const statusColors = {
 };
 
 export default function Approvals() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('All');
   const [approvals, setApprovals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
+
+  useEffect(() => {
+    if (!['manager', 'admin', 'super_admin'].includes(user?.role)) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const fetchApprovals = () => {
     setLoading(true);

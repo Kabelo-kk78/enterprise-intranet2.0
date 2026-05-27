@@ -44,6 +44,17 @@ const approvals = [
 const users = [
   {
     id: 'u1',
+    name: 'Super Admin',
+    email: 'super@company.com',
+    password: bcrypt.hashSync('super123', 10),
+    role: 'super_admin',
+    department: 'IT',
+    position: 'Super Administrator',
+    status: 'active',
+    createdAt: '2024-01-01',
+  },
+  {
+    id: 'u2',
     name: 'Admin User',
     email: 'admin@company.com',
     password: bcrypt.hashSync('admin123', 10),
@@ -54,7 +65,7 @@ const users = [
     createdAt: '2024-01-01',
   },
   {
-    id: 'u2',
+    id: 'u3',
     name: 'Jane Smith',
     email: 'jane@company.com',
     password: bcrypt.hashSync('jane123', 10),
@@ -65,7 +76,7 @@ const users = [
     createdAt: '2024-01-02',
   },
   {
-    id: 'u3',
+    id: 'u4',
     name: 'Bob Wilson',
     email: 'bob@company.com',
     password: bcrypt.hashSync('bob123', 10),
@@ -76,7 +87,7 @@ const users = [
     createdAt: '2024-01-03',
   },
   {
-    id: 'u4',
+    id: 'u5',
     name: 'Alice Brown',
     email: 'alice@company.com',
     password: bcrypt.hashSync('alice123', 10),
@@ -86,9 +97,20 @@ const users = [
     status: 'active',
     createdAt: '2024-01-04',
   },
+  {
+    id: 'u6',
+    name: 'Guest User',
+    email: 'guest@company.com',
+    password: bcrypt.hashSync('guest123', 10),
+    role: 'guest',
+    department: 'General',
+    position: 'Guest',
+    status: 'active',
+    createdAt: '2024-01-05',
+  },
 ];
 
-let nextUserNum = 5;
+let nextUserNum = 7;
 let nextDocNum = 6;
 let nextApprovalNum = 5;
 let nextActivityNum = 6;
