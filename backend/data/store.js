@@ -113,7 +113,7 @@ const users = [
 let nextUserNum = 7;
 let nextDocNum = 6;
 let nextApprovalNum = 5;
-let nextActivityNum = 6;
+let nextActivityNum = 7;
 
 function addUser(userData) {
   const id = 'u' + (nextUserNum++);
